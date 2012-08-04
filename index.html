@@ -1,0 +1,87 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Porco Rosso</title>
+  </head>
+  <body>
+
+    <div id="content">
+      <p class="german"></p>
+      <p class="english"></p>
+      <p class="japanese"></p>
+      <p class="spanish"></p>
+      <p class="russian"></p>
+    </div>
+
+    <script type="text/javascript" src="./jam/require.js"></script>
+    <script type="text/javascript">
+
+      var story = '';
+
+      require([
+        'src/google/translate',
+        'jquery',
+        'underscore',
+        'third-party/hotkeys'
+      ], function(translate) {
+
+        var $input   = $('input');
+        var $window  = $(window);
+        var $content = $('#content');
+
+        $window
+          .bind('keydown', 'backspace', removeBackEvent)
+          .keypress(addChar);
+
+        function removeBackEvent(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          removeChar(e);
+        }
+
+        function removeChar(e) {
+          if (story.length <= 0) {
+            return;
+          }
+          story = story.substring(0, story.length - 1);
+          updateDisplay();
+        }
+
+        function addChar(e) {
+          var s = getChar(e);
+          story += s;
+          updateDisplay();
+        }
+
+        function getChar(e) {
+          var result = '';
+          if (e.which == null) {
+            result = String.fromCharCode(e.keyCode);
+          } else if (e.which != 0 && e.charCode != 0) {
+            result = String.fromCharCode(event.which);
+          } else {
+            // a special char
+            console.log('A super special character', e);
+          }
+          return result;
+        }
+
+        function updateDisplay() {
+
+          _.each($content.children(), function(elem) {
+            translate.query(story, elem.className, function(resp) {
+              if (resp && resp.data && resp.data.translations && resp.data.translations.length > 0) {
+                elem.innerHTML = resp.data.translations[0].translatedText;
+              } else {
+                elem.innerHTML = '';
+              }
+            });
+          });
+
+        }
+
+      });
+
+    </script>
+  </body>
+</html>
