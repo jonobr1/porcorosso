@@ -1,1 +1,5 @@
 *.DS_Store
+*/scss_cache/*
+*.sass-cache/*
+*.scssc
+*/bourbon/*
