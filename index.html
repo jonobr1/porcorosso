@@ -55,6 +55,61 @@
       </p>
     </div>
 
+    <div id="sm2-container" style="visibility: hidden;"></div>
+
+    <script type="text/javascript" src="./third-party/soundmanager2.js"></script>
+    <script type="text/javascript">
+
+    /**
+     * Setup Sound in parllel
+     */
+
+    var type_index = 0;
+    var types = [], new_line, wind_up;
+
+    soundManager.setup({
+
+      url: 'third-party/swf/',
+
+      onready: function() {
+
+        for (var i = 0; i < 26; i++) {
+
+          types.push(soundManager.createSound({
+            id: 'type-' + i,
+            url: './assets/typewriter-key-1.mp3',
+            onload: function() {
+              console.log('type ready');
+            }
+          }));
+
+        }
+
+        new_line = soundManager.createSound({
+          id: 'new-line',
+          url: './assets/typewriter-line-break-1.mp3',
+          onload: function() {
+            console.log('new line ready');
+          }
+        });
+
+        wind_up = soundManager.createSound({
+          id: 'wind-up',
+          url: './assets/typewriter-paper-roll-up-1.mp3',
+          onload: function() {
+            console.log('wind up ready');
+          }
+        });
+
+      },
+
+      ontimeout: function() {
+        console.log('doh, timeout!');
+      }
+
+    });
+
+    </script>
     <script type="text/javascript" src="./jam/require.js"></script>
     <script type="text/javascript">
 
@@ -78,8 +133,6 @@
         var returned_length = 0;
         var carriage_return = _.debounce(carriageReturn, 2500);
         var cursors;
-
-        // TODO: Each line needs a cursor
 
         /**
          * Let's get typing!
@@ -186,6 +239,14 @@
 
         function updateDisplay() {
 
+          if (types.length > 0) {
+            types[type_index].play();
+            type_index++;
+            if (type_index >= types.length) {
+              type_index = 0;
+            }
+          }
+
           _.each(cursors, function(cursor) {
             cursor.animate();
           });
@@ -226,6 +287,16 @@
             return;
           }
 
+          if (new_line && _.isFunction(new_line.play)) {
+            new_line.play();
+          }
+
+          var windUp = _.once(function() {
+            if (wind_up && _.isFunction(wind_up.play)) {
+              wind_up.play();
+            }
+          });
+
           returning = true;
 
           var children = $content.children();
@@ -259,6 +330,10 @@
 
             var normal = (offset / content_width);
             var inverse = 1 - normal;
+
+            if (normal > 0) {
+              windUp();
+            }
 
             $el.animate(props, inverse * 2000, complete);
 
