@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Cursor</title>
+  </head>
+  <body>
+    <div id="content"></div>
+    <script type="text/javascript" src="./jam/require.js"></script>
+    <script type="text/javascript">
+
+      require([
+        'src/Cursor',
+        'jquery',
+        'underscore'
+      ], function(Cursor) {
+
+        var cursor = new Cursor(320, 180, true);
+
+        $('#content').append(cursor.domElement);
+        $(window).click(_.bind(cursor.animate, cursor));
+
+      });
+
+    </script>
+  </body>
+</html>

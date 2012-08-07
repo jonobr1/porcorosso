@@ -30,6 +30,14 @@ body {
       *vertical-align: auto; }
     #content p.right {
       text-align: right; }
+    #content p canvas {
+      display: -moz-inline-box;
+      -moz-box-orient: vertical;
+      display: inline-block;
+      vertical-align: baseline;
+      zoom: 1;
+      *display: inline;
+      *vertical-align: auto; }
     #content p.lang-chinese {
       letter-spacing: 14px; }
       #content p.lang-chinese span.cursor {
@@ -48,8 +56,6 @@ body {
         margin-left: -1px; }
     #content p.lang-arabic {
       letter-spacing: 3px; }
-      #content p.lang-arabic span.cursor {
-        margin-right: -3px; }
     #content p.lang-russian {
       letter-spacing: 1px; }
       #content p.lang-russian span.cursor {
@@ -63,5 +69,4 @@ body {
     *display: inline;
     *vertical-align: auto;
     width: 16px;
-    height: 16px;
-    background: #6DB73D; }
+    height: 16px; }

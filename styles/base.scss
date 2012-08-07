@@ -38,56 +38,44 @@ body {
       text-align: right;
     }
 
+    canvas {
+      @include inline-block;
+    }
+
     &.lang-chinese {
       letter-spacing: 14px;
-//      &.has-content {
-        span.cursor {
-          margin-left: -14px;
-        }
-//      }
+      span.cursor {
+        margin-left: -14px;
+      }
     }
     &.lang-japnese {
       letter-spacing: 4px;
-//      &.has-content {
-        span.cursor {
-          margin-left: -4px;
-        }
-//      }
+      span.cursor {
+        margin-left: -4px;
+      }
     }
     &.lang-korean {
       letter-spacing: 8px;
-//      &.has-content {
-        span.cursor {
-          margin-left: -8px;
-        }
-//      }
+      span.cursor {
+        margin-left: -8px;
+      }
     }
     &.lang-italian {
       letter-spacing: 1px;
-//      &.has-content {
-        span.cursor {
-          margin-left: -1px;
-        }
-//      }
+      span.cursor {
+        margin-left: -1px;
+      }
     }
     &.lang-arabic {
       letter-spacing: 3px;
-//      &.has-content {
-        span.cursor {
-          margin-right: -3px;
-  //        margin-left: -3px;
-        }
-//      }
     }
     &.lang-russian {
       letter-spacing: 1px;
-//      &.has-content {
-        span.cursor {
-          margin-left: -1px;
-        }
-//      }
+      span.cursor {
+        margin-left: -1px;
+      }
     }
-    
+
   }
 
   span.cursor {
@@ -95,7 +83,6 @@ body {
     @include inline-block;
     width: $font-size;
     height: $font-size;
-    background: #6DB73D;
 
   }
 

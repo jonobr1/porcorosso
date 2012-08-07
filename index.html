@@ -62,10 +62,11 @@
 
       require([
         'src/google/translate',
+        'src/Cursor',
         'jquery',
         'underscore',
         'third-party/hotkeys'
-      ], function(translate) {
+      ], function(translate, Cursor) {
 
         var $input    = $('input');
         var $window   = $(window);
@@ -76,6 +77,7 @@
         var content_width   = $content.width();
         var returned_length = 0;
         var carriage_return = _.debounce(carriageReturn, 2500);
+        var cursors;
 
         // TODO: Each line needs a cursor
 
@@ -90,12 +92,19 @@
 
           $window
             .bind('keydown', 'backspace', removeBackEvent)
+            .bind('keydown', 'return', carriageReturn)
             .keypress(addChar)
             .resize(layout);
 
           content_width = $content.width();
 
           layout();
+
+          cursors = _.map($('span.cursor'), function(elem) {
+            var cursor = new Cursor(24, 16, $(elem).parent().hasClass('right'));
+            elem.appendChild(cursor.domElement);
+            return cursor;
+          });
 
           $content.fadeIn();
 
@@ -177,6 +186,10 @@
 
         function updateDisplay() {
 
+          _.each(cursors, function(cursor) {
+            cursor.animate();
+          });
+
           _.each($content.children(), function(elem) {
 
             var language = elem.className.match(/lang\-([a-zA-Z]*)/)[1];
@@ -217,6 +230,16 @@
 
           var children = $content.children();
           var complete = _.after(children.length, function() {
+            story = '';
+            returned_length = 0;
+            _.each(children, function(elem) {
+              var $elem = $(elem);
+              var $el = $elem.find('.text');
+              $el.html('').css({
+                marginLeft: 0,
+                marginRight: 0
+              });
+            });
             returning = false;
           });
 
@@ -237,7 +260,7 @@
             var normal = (offset / content_width);
             var inverse = 1 - normal;
 
-            $el.animate(props, inverse * 1000, complete);
+            $el.animate(props, inverse * 2000, complete);
 
           });
 
