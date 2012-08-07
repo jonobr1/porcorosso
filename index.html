@@ -12,7 +12,7 @@
     <!-- Typewriter -->
     <!-- http://www.freesound.org/people/Horn/sounds/9744/ -->
 
-    <div id="content">
+    <div id="content" style="display:none;">
       <p class="lang-japanese">
         <span class="text"></span>
         <span class="cursor"></span>
@@ -96,6 +96,8 @@
           content_width = $content.width();
 
           layout();
+
+          $content.fadeIn();
 
         });
 
