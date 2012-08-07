@@ -1,0 +1,102 @@
+@import 'bourbon/bourbon';
+
+$font-size: 16px;
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: #000;
+  color: #fff;
+  font-weight: normal;
+  font-family: sans-serif;
+  font-size: $font-size;
+  line-height: $font-size;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+#content {
+
+  overflow: hidden;
+  width: 75%;
+  margin: 0 auto;
+
+  p {
+
+    height: $font-size;
+    padding: ($font-size / 2) 0;
+
+    * {
+      @include inline-block;
+    }
+
+    &.right {
+      text-align: right;
+    }
+
+    &.lang-chinese {
+      letter-spacing: 14px;
+//      &.has-content {
+        span.cursor {
+          margin-left: -14px;
+        }
+//      }
+    }
+    &.lang-japnese {
+      letter-spacing: 4px;
+//      &.has-content {
+        span.cursor {
+          margin-left: -4px;
+        }
+//      }
+    }
+    &.lang-korean {
+      letter-spacing: 8px;
+//      &.has-content {
+        span.cursor {
+          margin-left: -8px;
+        }
+//      }
+    }
+    &.lang-italian {
+      letter-spacing: 1px;
+//      &.has-content {
+        span.cursor {
+          margin-left: -1px;
+        }
+//      }
+    }
+    &.lang-arabic {
+      letter-spacing: 3px;
+//      &.has-content {
+        span.cursor {
+          margin-right: -3px;
+  //        margin-left: -3px;
+        }
+//      }
+    }
+    &.lang-russian {
+      letter-spacing: 1px;
+//      &.has-content {
+        span.cursor {
+          margin-left: -1px;
+        }
+//      }
+    }
+    
+  }
+
+  span.cursor {
+
+    @include inline-block;
+    width: $font-size;
+    height: $font-size;
+    background: #6DB73D;
+
+  }
+
+}

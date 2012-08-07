@@ -2,15 +2,54 @@
 <html>
   <head>
     <title>Porco Rosso</title>
+    <link rel="stylesheet" media="screen" type="text/css" href="./styles/base.css" />
+
   </head>
   <body>
 
+    <!-- http://www.veoh.com/watch/v15414987s6aZetQh/?h1=Porco+Rosso -->
+
     <div id="content">
-      <p class="german"></p>
-      <p class="english"></p>
-      <p class="japanese"></p>
-      <p class="spanish"></p>
-      <p class="russian"></p>
+      <p class="lang-japanese">
+        <span class="text"></span>
+        <span class="cursor"></span>
+      </p>
+      <p class="lang-italian">
+        <span class="text"></span>
+        <span class="cursor"></span>
+      </p>
+      <p class="lang-korean">
+        <span class="text"></span>
+        <span class="cursor"></span>
+      </p>
+      <p class="lang-english">
+        <span class="text"></span>
+        <span class="cursor"></span>
+      </p>
+      <p class="lang-chinese">
+        <span class="text"></span>
+        <span class="cursor"></span>
+      </p>
+      <p class="lang-spanish">
+        <span class="text"></span>
+        <span class="cursor"></span>
+      </p>
+      <p class="lang-arabic right">
+        <span class="cursor"></span>
+        <span class="text"></span>
+      </p>
+      <p class="lang-russian">
+        <span class="text"></span>
+        <span class="cursor"></span>
+      </p>
+      <p class="lang-french">
+        <span class="text"></span>
+        <span class="cursor"></span>
+      </p>
+      <p class="lang-german">
+        <span class="text"></span>
+        <span class="cursor"></span>
+      </p>
     </div>
 
     <script type="text/javascript" src="./jam/require.js"></script>
@@ -25,13 +64,78 @@
         'third-party/hotkeys'
       ], function(translate) {
 
-        var $input   = $('input');
-        var $window  = $(window);
-        var $content = $('#content');
+        var $input    = $('input');
+        var $window   = $(window);
+        var $content  = $('#content');
+        var languages = 0;
+        var returning = false;
 
-        $window
-          .bind('keydown', 'backspace', removeBackEvent)
-          .keypress(addChar);
+        var content_width   = $content.width();
+        var returned_length = 0;
+        var carriage_return = _.debounce(carriageReturn, 2500);
+
+        // TODO: Each line needs a cursor
+
+        /**
+         * Let's get typing!
+         * initialization function
+         */
+        translate.ready(function() {
+
+          // generateAllAvailableLanguages();
+          languages = $content.children().length;
+
+          $window
+            .bind('keydown', 'backspace', removeBackEvent)
+            .keypress(addChar)
+            .resize(layout);
+
+          content_width = $content.width();
+
+          layout();
+
+        });
+
+        function layout() {
+
+          var outer = $window.height();
+          var inner = $content.height();
+
+          _.extend($content[0].style, {
+            marginTop: (outer - inner) / 2 + 'px'
+          });
+
+          // var size = height / languages;
+          // 
+          // _.extend(document.body.style, {
+          //   fontSize: size + 'px',
+          //   lineHeight: size + 'px'
+          // });
+
+        }
+
+        function generateAllAvailableLanguages() {
+
+          _.each(translate.available, function(lang) {
+            var name = getCommonName(lang);
+            if (!_.isUndefined(name)) {
+              $content.append('<p class="' + name + '"/>');
+            }
+          });
+
+          languages = translate.available.length;
+
+        }
+
+        function getCommonName(lang) {
+          for (var k in translate.languages) {
+            var name = translate.languages[k];
+            if (name === lang) {
+              return k;
+            }
+          }
+          return;
+        }
 
         function removeBackEvent(e) {
           e.preventDefault();
@@ -40,7 +144,7 @@
         }
 
         function removeChar(e) {
-          if (story.length <= 0) {
+          if (story.length <= returned_length) {
             return;
           }
           story = story.substring(0, story.length - 1);
@@ -69,14 +173,70 @@
         function updateDisplay() {
 
           _.each($content.children(), function(elem) {
-            translate.query(story, elem.className, function(resp) {
-              if (resp && resp.data && resp.data.translations && resp.data.translations.length > 0) {
-                elem.innerHTML = resp.data.translations[0].translatedText;
-              } else {
-                elem.innerHTML = '';
+
+            var language = elem.className.match(/lang\-([a-zA-Z]*)/)[1];
+            translate.query(story, language, function(resp) {
+
+              var $elem = $(elem);
+              var el = $elem.find('.text')[0];
+
+              if ($elem.width() > content_width) {
+                carriageReturn();
               }
+
+              if (resp && resp.data && resp.data.translations && resp.data.translations.length > 0) {
+                var text = resp.data.translations[0].translatedText;
+                if ($elem.hasClass('right')) {
+                  text = text.split('').reverse('').join('');
+                }
+                el.innerHTML = text;
+              } else {
+                el.innerHTML = '';
+              }
+
             });
+
           });
+
+          carriage_return();
+
+        }
+
+        function carriageReturn() {
+
+          if (returning) {
+            return;
+          }
+
+          returning = true;
+
+          var children = $content.children();
+          var complete = _.after(children.length, function() {
+            returning = false;
+          });
+
+          _.each(children, function(elem) {
+
+            var $elem = $(elem);
+            var alignedLeft = !$elem.hasClass('right');
+            var $el = $elem.find('.text');
+            var offset = $el.width();
+
+            var props = {};
+            if (alignedLeft) {
+              props['marginLeft'] = - offset + 'px';
+            } else {
+              props['marginRight'] = - offset + 'px'
+            }
+
+            var normal = (offset / content_width);
+            var inverse = 1 - normal;
+
+            $el.animate(props, inverse * 1000, complete);
+
+          });
+
+          returned_length = story.length;
 
         }
 

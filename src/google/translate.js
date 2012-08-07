@@ -3,6 +3,9 @@ define([
   'underscore'
 ], function() {
 
+  var callbacks = [];
+  var ready = false;
+
   var languages = {
     'afrikaans': 'af',
     'albanian': 'sq',
@@ -13,8 +16,9 @@ define([
     'belarusian': 'be',
     'bulgarian': 'bg',
     'catalan': 'ca',
-    'chinese Simplified': 'zh-CN',
-    'chinese Traditional': 'zh-TW',
+    'chinese': 'zh-CN',
+    'chinese simplified': 'zh-CN',
+    'chinese traditional': 'zh-TW',
     'croatian': 'hr',
     'czech': 'cs',
     'danish': 'da',
@@ -70,16 +74,44 @@ define([
     'yiddish': 'yi'
   };
 
-  var key = 'AIzaSyCI0d6x2G4HPqC0bl1zKwtLdNdrf3rEOuo';
-  var url = [
-    'https://www.googleapis.com/language/translate/v2?',
-    'key=',
+  var key  = 'AIzaSyCI0d6x2G4HPqC0bl1zKwtLdNdrf3rEOuo';
+  var base = 'https://www.googleapis.com/language/translate/v2';
+  var url  = [
+    base,
+    '?key=',
     key,
     '&'
     // 'prettyprint=true&'
   ].join('');
 
-  return {
+  /**
+   * Get the most up-to-date languages
+   */
+  $.get(base + '/languages?key=' + key, function(resp) {
+    translate.available = _.map(resp.data.languages, function(o) {
+      return o.language;
+    });
+    ready = true;
+    _.each(callbacks, function(callback) {
+      if (_.isFunction(callback)) {
+        callback();
+      }
+    });
+    callbacks.length = 0;
+  });
+
+  var translate = {
+
+    ready: function(func) {
+      if (ready) {
+        func();
+      } else {
+        callbacks.push(func);
+      }
+      return this;
+    },
+
+    available: ['en', 'es', 'jp'],
 
     languages: languages,
 
@@ -109,5 +141,7 @@ define([
     }
 
   };
+
+  return translate;
 
 });
