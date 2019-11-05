@@ -111,16 +111,15 @@
 
     </script>
     <script type="text/javascript" src="./jam/require.js"></script>
+    <script type="text/javascript" src="./jam/jquery/jquery.js"></script>
+    <script type="text/javascript" src="./jam/underscore/underscore.js"></script>
     <script type="text/javascript">
 
       var story = '';
 
       require([
         'src/google/translate',
-        'src/Cursor',
-        'jquery',
-        'underscore',
-        'third-party/hotkeys'
+        'src/Cursor'
       ], function(translate, Cursor) {
 
         var $input    = $('input');
@@ -144,9 +143,8 @@
           languages = $content.children().length;
 
           $window
-            .bind('keydown', 'backspace', removeBackEvent)
-            .bind('keydown', 'return', carriageReturn)
-            .keypress(addChar)
+            .bind('keydown', keydown)
+            .bind('keypress', addChar)
             .resize(layout);
 
           content_width = $content.width();
@@ -163,6 +161,19 @@
 
         });
 
+        function keydown(e) {
+          switch (e.which) {
+            case 8:
+              e.stopPropagation();
+              removeBackEvent(e);
+              break;
+            case 13:
+              e.stopPropagation();
+              carriageReturn(e);
+              break;
+          }
+        }
+
         function layout() {
 
           var outer = $window.height();
@@ -173,7 +184,7 @@
           });
 
           // var size = height / languages;
-          // 
+          //
           // _.extend(document.body.style, {
           //   fontSize: size + 'px',
           //   lineHeight: size + 'px'
